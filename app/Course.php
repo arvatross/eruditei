@@ -20,10 +20,6 @@ class Course extends Model
     public function studentu() {
         return $this->belongsToMany('App\Course', 'course_users');
     }
-
-    public function hello() {
-        
-    }
     
     public function getRouteKeyName() {
         return 'slug';
