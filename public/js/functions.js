@@ -4,5 +4,5 @@ $('textarea').each(function () {
 });
 
 $(document).ready(function() {
-    $('div > img').addClass('img-fluid');
+    $('.courseContent img').addClass('img-fluid');
 });
