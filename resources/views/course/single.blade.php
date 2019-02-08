@@ -37,23 +37,27 @@
             </div>
         </div>
         <div class="col-md-9 mb-4">
-            <h4>Course Contents</h4>
-            <div class="card bg-white border-0 shadow">
-                <div class="card-body">
-                    @if(Auth::user()->account_type === 'Instructor')
-                        <button type="button" class="btn btn-primary mb-3" data-toggle="modal" data-target="#contentModal">Add a Section</button>
-                    @endif
-                    <div class="courseContent" id="courseContent">
-                    @foreach($curricula as $curriculum)
-                        <div class="card my-2">
-                            <h5 class="card-header text-primary" style="cursor:pointer;" id="heading{{ $curriculum->id }}" data-toggle="collapse" data-target="#collapsibleItem{{ $curriculum->id }}" aria-expanded="true" aria-controls="collapse{{ $curriculum->id }}">{{ $curriculum->title }}</h5>
-                            <div id="collapsibleItem{{ $curriculum->id }}" class="collapse" aria-labelledby="heading{{ $curriculum->id }}" data-parent="#courseContent">
-                                <div class="card-body">
-                                    {!! $curriculum->content !!}
+            <div class="row">
+                <div class="col-md-12">
+                    <h4>Course Contents</h4>
+                    <div class="card bg-white border-0 shadow">
+                        <div class="card-body">
+                            @if(Auth::user()->account_type === 'Instructor')
+                                <button type="button" class="btn btn-primary mb-3" data-toggle="modal" data-target="#contentModal">Add a Section</button>
+                            @endif
+                            <div class="courseContent" id="courseContent">
+                            @foreach($curricula as $curriculum)
+                                <div class="card my-2">
+                                    <h5 class="card-header text-primary" style="cursor:pointer;" id="heading{{ $curriculum->id }}" data-toggle="collapse" data-target="#collapsibleItem{{ $curriculum->id }}" aria-expanded="true" aria-controls="collapse{{ $curriculum->id }}">{{ $curriculum->title }}</h5>
+                                    <div id="collapsibleItem{{ $curriculum->id }}" class="collapse" aria-labelledby="heading{{ $curriculum->id }}" data-parent="#courseContent">
+                                        <div class="card-body">
+                                            {!! $curriculum->content !!}
+                                        </div>
+                                    </div>
                                 </div>
+                            @endforeach
                             </div>
                         </div>
-                    @endforeach
                     </div>
                 </div>
             </div>
