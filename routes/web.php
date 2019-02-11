@@ -29,7 +29,7 @@ Route::get('/course/{course}', 'CourseController@show')->name('courses.show');
 
 Route::post('/course/store', 'CourseController@store')->name('courses.store');
 
-Route::post('/course/join', 'CourseUserController@store')->name('courses.join');
+Route::post('/course/join', 'CourseController@join')->name('courses.join');
 
 Route::get('/resources', 'ResourceController@index')->name('resources.index');
 

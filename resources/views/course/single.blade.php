@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', $course->name)
+@section('title', $courses->name)
 
 @section('content')
 <div class="container">
@@ -10,14 +10,14 @@
                 <div class="card-body">
                     <div class="row">
                         <div class="col-md-6">
-                            <img src="/storage/images/{{ $course->cover_url }}" class="img-fluid" alt="Course Image">
+                            <img src="/storage/images/{{ $courses->cover_url }}" class="img-fluid" alt="Course Image">
                         </div>
                         <div class="col-md-6">
-                            <h4 class="card-title mt-3">{{ $course->name }}</h4>
-                            <h6 class="card-subtitle mb-2 text-muted">{{ $course->user->name }} &bull; {{ $course->category }}</h6>
-                            <p class="card-text">{{ $course->description }}</p>
+                            <h4 class="card-title mt-3">{{ $courses->name }}</h4>
+                            <h6 class="card-subtitle mb-2 text-muted">{{ $courses->category }}</h6>
+                            <p class="card-text">{{ $courses->description }}</p>
                             @if(Auth::user()->account_type === 'Instructor')
-                                COURSE CODE: <b>{{ $course->code }}</b>
+                                COURSE CODE: <b>{{ $courses->code }}</b>
                             @endif
                         </div> 
                     </div>
@@ -85,7 +85,7 @@
                 <div class="container">
                     <div class="row">
                         <div class="col-md-4 my-2 text-center">
-                            <a href="{{ route('curricula.create', ['course_id' => $course->id]) }}" class="card-link">
+                            <a href="{{ route('curricula.create', ['course_id' => $courses->id]) }}" class="card-link">
                                 <div class="card bg-primary border-0 shadow" style="height:100px;">
                                     <h5 class="text-white my-auto">TEXT</h5>
                                 </div>

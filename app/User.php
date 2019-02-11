@@ -29,11 +29,7 @@ class User extends Authenticatable
     ];
 
     public function course() {
-        return $this->hasMany('App\Course');
-    }
-
-    public function studentc() {
-        return $this->belongsToMany('App\Course', 'course_users');
+        return $this->belongsToMany('App\Course', 'course_users', 'user_id', 'course_id');
     }
 
     public function getRouteKeyName()
