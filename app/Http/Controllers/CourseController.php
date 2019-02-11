@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\User;
 use App\Course;
 use App\Curriculum;
 use Illuminate\Http\Request;
@@ -20,8 +21,8 @@ class CourseController extends Controller
      */
     public function index()
     {
-        $courses = Course::where('user_id', Auth::id())->get();
-        return view('course.all', compact('courses'));
+        $user = User::find(Auth::id());
+        return view('course.all', compact('user'));
     }
 
     /**
@@ -73,8 +74,10 @@ class CourseController extends Controller
         $course->category = $request->category;
         $course->slug = str_slug($request->name, '-');
         $course->code = str_random(7);
-        $course->user_id = Auth::id();
         $course->save();
+
+        $user = User::find(Auth::id());
+        $user->course()->attach($course);
 
         return redirect()->route('courses.show', [$course]);
     }
@@ -87,8 +90,21 @@ class CourseController extends Controller
      */
     public function show(Course $course)
     {
+        $courses = Course::find($course)->first();
         $curricula = Curriculum::where('course_id', $course->id)->get();
-        return view('course.single', compact('course', 'curricula'));
+        return view('course.single', compact('courses', 'curricula'));
+    }
+
+    public function join(Request $request) {
+        if(Course::where('code', $request->code)->first()) {
+            $user = User::find(Auth::id());
+            $course = Course::where('code', $request->code)->first();
+            $user->course()->attach($course);
+            return redirect()->back()->with('success', "You've joined the course succesfully!");
+        } else {
+            return redirect()->back()->with('failed', "Incorrect code or the course doesn't exist!");
+        }
+        
     }
 
     /**
