@@ -31,9 +31,9 @@ Route::post('/course/store', 'CourseController@store')->name('courses.store');
 
 Route::post('/course/join', 'CourseController@join')->name('courses.join');
 
-Route::get('/course/{course}/updates', 'UpdateController@index')->name('updates.index');
-
 Route::get('/resources', 'ResourceController@index')->name('resources.index');
+
+Route::get('/resource/create/{course_id}', 'ResourceController@create')->name('resources.create');
 
 Route::get('/notes', 'NoteController@index')->name('notes.index');
 

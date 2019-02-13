@@ -19,6 +19,8 @@ class CreateResourcesTable extends Migration
             $table->string('file_url');
             $table->string('file_type');
             $table->string('file_size');
+            $table->unsignedInteger('user_id');
+            $table->foreign('user_id')->references('id')->on('users');
             $table->timestamps();
         });
     }

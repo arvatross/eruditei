@@ -2,16 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Resource;
-use App\Course;
+use App\Exam;
 use Illuminate\Http\Request;
 
-class ResourceController extends Controller
+class ExamController extends Controller
 {
-    public function __construct() {
-        $this->middleware('auth');
-    }
-    
     /**
      * Display a listing of the resource.
      *
@@ -19,7 +14,7 @@ class ResourceController extends Controller
      */
     public function index()
     {
-        return view('resources.index');
+        //
     }
 
     /**
@@ -27,10 +22,9 @@ class ResourceController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create($course_id)
+    public function create()
     {
-        $course = Course::find($course_id);
-        return view('resources.create', compact('course'));
+        //
     }
 
     /**
@@ -47,10 +41,10 @@ class ResourceController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Resource  $resource
+     * @param  \App\Exam  $exam
      * @return \Illuminate\Http\Response
      */
-    public function show(Resource $resource)
+    public function show(Exam $exam)
     {
         //
     }
@@ -58,10 +52,10 @@ class ResourceController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Resource  $resource
+     * @param  \App\Exam  $exam
      * @return \Illuminate\Http\Response
      */
-    public function edit(Resource $resource)
+    public function edit(Exam $exam)
     {
         //
     }
@@ -70,10 +64,10 @@ class ResourceController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Resource  $resource
+     * @param  \App\Exam  $exam
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Resource $resource)
+    public function update(Request $request, Exam $exam)
     {
         //
     }
@@ -81,10 +75,10 @@ class ResourceController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Resource  $resource
+     * @param  \App\Exam  $exam
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Resource $resource)
+    public function destroy(Exam $exam)
     {
         //
     }

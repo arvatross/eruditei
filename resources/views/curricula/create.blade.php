@@ -7,6 +7,12 @@
     @csrf
     <div class="row">
         <div class="col-md-12 my-3">
+            @if(session()->has('success'))
+                <div class="alert alert-success">
+                    {{ session()->get('success') }}
+                    <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a> {{ session('status') }}
+                </div>
+            @endif
             <h3>Create Content</h3>
         </div>
     </div>

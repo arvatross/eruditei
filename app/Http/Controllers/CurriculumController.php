@@ -52,7 +52,7 @@ class CurriculumController extends Controller
         $curriculum->course_id = $request->cid;
         $curriculum->save();
 
-        return back()->with('success', 'Successfully added a course content');
+        return redirect()->back()->with('success', 'Successfully added a course curriculum!');
 
     }
 
