@@ -3,6 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\User;
+use App\Update;
+use App\Resource;
+use App\Quiz;
 use App\Course;
 use App\Curriculum;
 use Illuminate\Http\Request;
@@ -92,7 +95,8 @@ class CourseController extends Controller
     {
         $courses = Course::find($course)->first();
         $curricula = Curriculum::where('course_id', $course->id)->get();
-        return view('course.single', compact('courses', 'curricula'));
+        
+        return view('course.single', compact('courses', 'curricula', 'updates', 'resources', 'quizzes'));
     }
 
     public function join(Request $request) {
