@@ -14,7 +14,8 @@ class UpdateController extends Controller
      */
     public function index()
     {
-        //
+        $current = Update::where('course_id', $course->id)->get();
+        return view('updates', compact('current'));
     }
 
     /**

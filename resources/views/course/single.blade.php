@@ -26,89 +26,59 @@
         </div>
     </div>
     <div class="row">
-        <div class="col-md-3 mb-4">
+        <div class="col-md-4 mb-4">
+            <h4 class="pl-2">Announcements</h4>
             <div class="card bg-white border-0 shadow">
-            <div class="list-group list-group-flush" id="list-tab" role="tablist">
-                <a class="list-group-item list-group-item-action active" data-toggle="list" href="#android" role="tab"><i class="fas fa-book fa-lg align-middle"></i><span class="align-middle"> Materials</span></a>
-                <a class="list-group-item list-group-item-action" data-toggle="list" href="#laravel" role="tab"><i class="fas fa-folder fa-lg align-middle"></i><span class="align-middle"> Updates</span></a>
-                <a class="list-group-item list-group-item-action" data-toggle="list" href="#php" role="tab"><i class="fas fa-question-circle fa-lg align-middle"></i><span class="align-middle"> Quizzes</span></a>
-                <a class="list-group-item list-group-item-action" data-toggle="list" href="#java" role="tab"><i class="fas fa-user-edit fa-lg align-middle"></i><span class="align-middle"> Scores</span></a>
-            </div>
-            </div>
-        </div>
-        <div class="col-md-9 mb-4">
-            <div class="row">
-                <div class="col-md-12">
-                    <h4>Course Contents</h4>
-                    <div class="card bg-white border-0 shadow">
-                        <div class="card-body">
-                            @if(Auth::user()->account_type === 'Instructor')
-                                <button type="button" class="btn btn-primary mb-3" data-toggle="modal" data-target="#contentModal">Add a Section</button>
-                            @endif
-                            <div class="courseContent" id="courseContent">
-                            @foreach($curricula as $curriculum)
-                                <div class="card my-2">
-                                    <h5 class="card-header text-primary" style="cursor:pointer;" id="heading{{ $curriculum->id }}" data-toggle="collapse" data-target="#collapsibleItem{{ $curriculum->id }}" aria-expanded="true" aria-controls="collapse{{ $curriculum->id }}">{{ $curriculum->title }}</h5>
-                                    <div id="collapsibleItem{{ $curriculum->id }}" class="collapse" aria-labelledby="heading{{ $curriculum->id }}" data-parent="#courseContent">
-                                        <div class="card-body">
-                                            {!! $curriculum->content !!}
-                                        </div>
-                                    </div>
-                                </div>
-                            @endforeach
-                            </div>
-                        </div>
-                    </div>
+                <div class="card-body">
+                    No announcements recently published...
                 </div>
             </div>
-            <h4 class="mt-4">Attachments</h4>
+            <h4 class="mt-4 pl-2">Attachments</h4>
             <div class="card bg-white border-0 shadow">
                 <div class="card-body">
                     No files have been uploaded to this course...
                 </div>
             </div>
         </div>
-    </div>
-</div>
-
-<!-- For the modal content -->
-<div class="modal fade" id="contentModal" tabindex="-1" role="dialog" aria-labelledby="contentModalLabel" aria-hiddent="true">
-    <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Select Content Type</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <div class="container">
-                    <div class="row">
-                        <div class="col-md-4 my-2 text-center">
-                            <a href="{{ route('curricula.create', ['course_id' => $courses->id]) }}" class="card-link">
-                                <div class="card bg-primary border-0 shadow" style="height:100px;">
-                                    <h5 class="text-white my-auto">TEXT</h5>
+        <div class="col-md-8 mb-4">
+            <h4 class="pl-2">Lessons</h4>
+            <div class="card bg-white border-0 shadow">
+                <div class="card-body">
+                    @if(Auth::user()->account_type === 'Instructor')
+                        <button type="button" class="btn btn-primary mb-3" data-toggle="modal" data-target="#contentModal">Add a Content</button>
+                    @endif
+                    <div class="courseContent" id="courseContent">
+                        @foreach($curricula as $curriculum)
+                            <div class="card my-2">
+                                <h5 class="card-header text-primary" style="cursor:pointer;" id="heading{{ $curriculum->id }}" data-toggle="collapse" data-target="#collapsibleItem{{ $curriculum->id }}" aria-expanded="true" aria-controls="collapse{{ $curriculum->id }}">{{ $curriculum->title }}</h5>
+                                <div id="collapsibleItem{{ $curriculum->id }}" class="collapse" aria-labelledby="heading{{ $curriculum->id }}" data-parent="#courseContent">
+                                    <div class="card-body">
+                                        {!! $curriculum->content !!}
+                                    </div>
                                 </div>
-                            </a> 
-                        </div>
-                        <div class="col-md-4 my-2 text-center">
-                            <a href="" class="card-link">
-                                <div class="card bg-primary border-0 shadow" style="height:100px;">
-                                    <h5 class="text-white my-auto">FILE</h5>
-                                </div>
-                            </a>  
-                        </div>
-                        <div class="col-md-4 my-2 text-center">
-                            <a href="" class="card-link">
-                                <div class="card bg-primary border-0 shadow" style="height:100px;">
-                                    <h5 class="text-white my-auto">QUIZ</h5>
-                                </div>
-                            </a> 
-                        </div>
+                            </div>
+                        @endforeach
                     </div>
                 </div>
             </div>
+            <h4 class="mt-4 pl-2">Quizzes</h4>
+            <div class="card bg-white border-0 shadow">
+                <div class="card-body">
+                    This course has no available quizzes...
+                </div>
+            </div>
         </div>
-    </div>                             
+    </div>
+</div>
+
+<!-- Floating Action Button -->
+<div class="zoom">
+    <a class="text-white zoom-fab zoom-btn-large" id="zoomBtn"><i class="fas fa-plus fa-lg"></i></a>
+    <ul class="zoom-menu">
+        <li><a href="{{ route('curricula.create', ['course_id' => $courses->id]) }}" class="text-white zoom-fab zoom-btn-sm zoom-btn-person scale-transition scale-out" data-toggle="tooltip" title="Text/Lesson"><i class="fas fa-font"></i></a></li>
+        <li><a class="zoom-fab zoom-btn-sm zoom-btn-doc scale-transition scale-out" data-toggle="tooltip" title="File/Attachment"><i class="fas fa-paperclip"></i></a></li>
+        <li><a class="text-white zoom-fab zoom-btn-sm zoom-btn-tangram scale-transition scale-out" data-toggle="tooltip" title="Quizzes"><i class="fas fa-question-circle"></i></a></li>
+        <li><a class="text-white zoom-fab zoom-btn-sm zoom-btn-report scale-transition scale-out" data-toggle="tooltip" title="Announcements"><i class="fas fa-bullhorn"></i></a></li>
+    </ul>
 </div>
 @endsection
