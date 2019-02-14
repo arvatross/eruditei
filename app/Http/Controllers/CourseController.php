@@ -70,7 +70,7 @@ class CourseController extends Controller
             $fileNameToStore = 'default-course-banner.png';
         }
         
-        $course = new Course();
+        $course = new Course;
         $course->cover_url = $fileNameToStore;
         $course->name = title_case($request->name);
         $course->description = $request->description;

@@ -35,6 +35,8 @@ Route::get('/resources', 'ResourceController@index')->name('resources.index');
 
 Route::get('/resource/create/{course_id}', 'ResourceController@create')->name('resources.create');
 
+Route::post('/resource/store', 'ResourceController@store')->name('resources.store');
+
 Route::get('/notes', 'NoteController@index')->name('notes.index');
 
 Route::get('/content/create/{course_id}', 'CurriculumController@create')->name('curricula.create');

@@ -41,7 +41,29 @@ class ResourceController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $this->validate($request, [
+            'file' => 'required|max:10000|mimes:doc,docx,pdf,jpeg,jpg,png,gif,xls,xlsx,ppt,pptx'
+        ]);
+        // Get filename with extension            
+        $filenameWithExt = $request->file('file')->getClientOriginalName();
+        // Get just filename
+        $filename = pathinfo($filenameWithExt, PATHINFO_FILENAME);            
+        // Get just ext
+        $extension = $request->file('file')->getClientOriginalExtension();
+        //Filename to store
+        $fileNameToStore = $filename.'_'.time().'.'.$extension;                       
+        // Upload Image
+        $path = $request->file('file')->storeAs('public/uploads', $fileNameToStore);
+
+        $resource = new Resource;
+        $resource->file_name = $filename;
+        $resource->file_url = $filenameWithExt;
+        $resource->file_type = $extension;
+        $resource->file_size = $file->getSize();
+        $resource->user_id = Auth::id();
+        $resource->course_id = $request->rid;
+        $resource->save();
+	
     }
 
     /**
