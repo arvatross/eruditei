@@ -3,10 +3,16 @@
 namespace App\Http\Controllers;
 
 use App\Update;
+use App\Course;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class UpdateController extends Controller
 {
+    public function __construct() {
+        $this->middleware('auth', ['verified']);
+    }
+    
     /**
      * Display a listing of the resource.
      *
@@ -23,9 +29,10 @@ class UpdateController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function create($course_id)
     {
-        //
+        $course = Course::find($course_id);
+        return view('announcements.create', compact('course'));
     }
 
     /**
@@ -36,7 +43,16 @@ class UpdateController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $update = new Update;
+        $update->title = $request->name;
+        $update->content = $request->description;
+        $update->course_id = $request->cid;
+        $update->user_id = Auth::id();
+        $update->save();
+
+        $course = Course::find($request->cid)->first();
+
+        return redirect()->route('courses.show', [$course->slug]);
     }
 
     /**

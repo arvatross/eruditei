@@ -1,52 +1,32 @@
 @extends('layouts.app')
 
+@section('title', 'Notes')
+
 @section('content')
 <div class="container">
     <div class="row">
-        <div class="col-md-12 my-3">
+        <div class="col-md-8 my-3">
             <h3>Notes</h3>
         </div>
-    </div>
-    <div class="row">
-       <div class="col-md-4 mb-3">
-            <form class="form-block">
-                <input class="form-control border-0 shadow-sm" type="search" placeholder="Search my notes" aria-label="Search">
-            </form>
-       </div>
-       <div class="col-md-4 mb-3">
-            <select class="custom-select border-0 shadow-sm">
-                <option selected>Sort by</option>
-                <option value="1">Recently Published</option>
-                <option value="2">Most Comments</option>
-            </select>
-       </div>
-       <div class="col-md-4 mb-3">
-            <button class="btn btn-block btn-success shadow-sm">New Note</button>
+        <div class="col-md-4 mb-3">
+            <a href="{{ route('notes.create') }}" class="btn btn-block btn-success shadow-sm">New Note</a>
        </div>
     </div>
     <div class="row mt-3">
         <div class="col-md-12 card-columns">
-            <div class="card shadow border-0 mb-4">
-                <img src="{{ asset('images/default-course-banner.png') }}" class="card-img-top bg-eruditei" alt="defaul">
-                <div class="card-body">
-                    <h5 class="card-title">Card title that wraps to a new line</h5>
-                    <p class="card-text">This is a longer card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
-                </div>
-            </div>
-            <div class="card shadow border-0 mb-4">
-                <img src="{{ asset('images/default-course-banner.png') }}" class="card-img-top bg-eruditei" alt="defaul">
-                <div class="card-body">
-                    <h5 class="card-title">Card title that wraps to a new line</h5>
-                    <p class="card-text">This is a longer card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
-                </div>
-            </div>
-            <div class="card shadow border-0 mb-4">
-                <img src="{{ asset('images/default-course-banner.png') }}" class="card-img-top bg-eruditei" alt="defaul">
-                <div class="card-body">
-                    <h5 class="card-title">Card title that wraps to a new line</h5>
-                    <p class="card-text">This is a longer card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
-                </div>
-            </div>
+            @forelse($user->note as $note)
+                <a href="/notes/show/{{ $note->id }}" class="text-secondary card-link">
+                    <div class="card border-0 shadow mb-4">
+                        <img class="card-img-top" src="/storage/images/{{ $note->cover_url }}" alt="{{ $note->name }}">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ $note->title }}</h5>
+                            <p class="card-text">{!! str_limit($note->content, 50, '...'); !!}</p>
+                        </div>
+                    </div>
+                </a>
+            @empty
+                No records found...
+            @endforelse
         </div>
     </div>
 </div>

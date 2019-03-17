@@ -18,8 +18,8 @@ class CreateNotesTable extends Migration
             $table->text('title');
             $table->longText('content');
             $table->string('cover_url');
-            $table->string('category');
-            $table->string('visibility');
+            $table->unsignedInteger('user_id');
+            $table->foreign('user_id')->references('id')->on('users');
             $table->timestamps();
         });
     }

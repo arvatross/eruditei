@@ -14,9 +14,6 @@
             <form method="post" action="{{ route('resources.store') }}" class="dropzone mb-4" id="dropzone" enctype="multipart/form-data">
                 @csrf
                 <input type="hidden" name="rid" value="{{ $course->id }}">
-                <div class="fallback">
-                    <input name="file" type="file" multiple />
-                </div>
             </form>
         </div>
         <div class="col-md-4">
@@ -29,21 +26,4 @@
         </div>
     </div>
 </div>
-
-<script type="text/javascript">
-    Dropzone.options.dropzone =
-    {
-        maxFilesize: 12,
-        acceptedFiles: ".jpeg,.jpg,.png,.gif,.doc,.docx,.pdf,.xls,.xlsx,.ppt,.pptx",
-        timeout: 5000,
-        success: function(file, response) 
-        {
-            console.log(response);
-        },
-        error: function(file, response)
-        {
-            return false;
-        }
-    };
-</script>
 @endsection

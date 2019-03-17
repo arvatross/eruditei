@@ -1,44 +1,38 @@
 @extends('layouts.app')
+
+@section('title', $user->name.' (Public Profile)')
+
 @section('content')
 <div class="container">
     <div class="row">
-        <div class="col-md-3">
+        <div class="col-md-4">
             <div class="card bg-white shadow border-0 mb-4">
-                <img src="{{ asset('images/default-user.png')}}" alt="..." class="card-img-top bg-eruditei">
+                <img src="/storage/uploads/{{ $user->img_filename }}" alt="..." class="card-img-top bg-eruditei">
                 <div class="card-body">
-                    <h5 class="card-title">{{ $user->name }} ({{ $user->account_type }})</h5>
-                    <h6 class="card-subtitle mb-4 text-muted"><?php echo '@' ?>{{ $user->username}}</h6>
-                    <p class="card-text">Hi! I'm the Admin of Eruditei!</p>
+                    <h5 class="card-title">{{ $user->name }}</h5>
+                    <h6 class="card-subtitle mb-4 text-muted">{{ $user->role->name }}</h6>
+                    <p class="card-text">{!! $user->about !!}</p>
+                    <p class="card-text">{!! $user->website !!}</p>
                 </div>
             </div>
         </div>
-        <div class="col-md-9">
+        <div class="col-md-8">
             <div class="row">
-            <div class="col-md-4">
-                <button class="btn btn-primary btn-block">
-                    SORT BY CATEGORY
-                </button>
-            </div>
-            <div class="col-md-4">
-            <button class="btn btn-primary btn-block">
-            SORT BY DATE
-                </button>
-            </div>
-            <div class="col-md-4">
-            <button class="btn btn-primary btn-block">
-            SORT BY STATUS
-                </button>
-            </div>
-            </div>
-            <div class="card-columns">
-                <div class="card bg-white shadow border-0 mb-4">
-                    <img src="{{ asset('images/default-user.png')}}" alt="..." class="card-img-top bg-eruditei">
-                    <div class="card-body">
-                        <h5 class="card-title">{{ $user->name }} ({{ $user->account_type }})</h5>
-                        <h6 class="card-subtitle mb-4 text-muted"><?php echo '@' ?>{{ $user->username}}</h6>
-                        <p class="card-text">Hi! I'm the Admin of Eruditei!</p>
+                @forelse($user->note as $note)
+                    <div class="col-md-4">
+                        <a href="/notes/show/{{ $note->id }}" class="text-secondary card-link">
+                            <div class="card border-0 shadow mb-4">
+                                <img class="card-img-top" src="/storage/images/{{ $note->cover_url }}" alt="{{ $note->name }}">
+                                <div class="card-body">
+                                    <h5 class="card-title">{{ $note->title }}</h5>
+                                    <p class="card-text">{!! str_limit($note->content, 50, '...') !!}</p>
+                                </div>
+                            </div>
+                        </a>
                     </div>
-                </div>
+                @empty
+                    This user has yet to create a note...
+                @endforelse
             </div>
         </div>
     </div>

@@ -8,13 +8,16 @@ use App\Resource;
 use App\Quiz;
 use App\Course;
 use App\Curriculum;
+use App\Exam;
+use App\Category;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Validator;
 
 class CourseController extends Controller
 {
     public function __construct() {
-        $this->middleware('auth');
+        $this->middleware(['auth', 'verified']);
     }
     
     /**
@@ -46,43 +49,49 @@ class CourseController extends Controller
      */
     public function store(Request $request)
     {   
-        $this->validate($request, [
-            'name'=>'required',
-            'description'=>'required',
+        $validator = Validator::make($request->all(), [
+            'name' => 'required',
+            'description' => 'required',
             'category' => 'required',
-            // nullable == optional
-            // apache max upload 2mb
-            'photo' => 'image|nullable|max:1999'
+            'photo' => 'image|nullable|max:99999|mimes:jpeg,jpg,png',
         ]);
-        // Handle File Upload
-        if($request->hasFile('photo')) {
-            // Get filename with extension            
-            $filenameWithExt = $request->file('photo')->getClientOriginalName();
-            // Get just filename
-            $filename = pathinfo($filenameWithExt, PATHINFO_FILENAME);            
-           // Get just ext
-            $extension = $request->file('photo')->getClientOriginalExtension();
-            //Filename to store
-            $fileNameToStore = $filename.'_'.time().'.'.$extension;                       
-          // Upload Image
-            $path = $request->file('photo')->storeAs('public/images', $fileNameToStore);
-        } else {
-            $fileNameToStore = 'default-course-banner.png';
-        }
         
-        $course = new Course;
-        $course->cover_url = $fileNameToStore;
-        $course->name = title_case($request->name);
-        $course->description = $request->description;
-        $course->category = $request->category;
-        $course->slug = str_slug($request->name, '-');
-        $course->code = str_random(7);
-        $course->save();
+        if($validator->fails()) {
+            return redirect()->back()->withErrors($validator);
+        
+        } else {
 
-        $user = User::find(Auth::id());
-        $user->course()->attach($course);
+            if($request->hasFile('photo')) {
+                // Get filename with extension            
+                $filenameWithExt = $request->file('photo')->getClientOriginalName();
+                // Get just filename
+                $filename = pathinfo($filenameWithExt, PATHINFO_FILENAME);            
+               // Get just ext
+                $extension = $request->file('photo')->getClientOriginalExtension();
+                //Filename to store
+                $fileNameToStore = $filename.'_'.time().'.'.$extension;                       
+              // Upload Image
+                $path = $request->file('photo')->storeAs('public/images', $fileNameToStore);
+            } else {
+                $fileNameToStore = 'default-course-banner.png';
+            }
 
-        return redirect()->route('courses.show', [$course]);
+            $course = new Course;
+            $course->cover_url = $fileNameToStore;
+            $course->name = title_case($request->name);
+            $course->description = $request->description;
+            $course->category = $request->category;
+            $course->slug = str_slug($request->name, '-');
+            $course->code = str_random(7);
+            $course->status = 'PUBLISHED';
+            $course->save();
+
+            $user = User::find(Auth::id());
+            $user->course()->attach($course);
+
+            return redirect()->route('courses.show', [$course]);
+
+        }            
     }
 
     /**
@@ -93,10 +102,15 @@ class CourseController extends Controller
      */
     public function show(Course $course)
     {
-        $courses = Course::find($course)->first();
-        $curricula = Curriculum::where('course_id', $course->id)->get();
-        
-        return view('course.single', compact('courses', 'curricula', 'updates', 'resources', 'quizzes'));
+        $user = User::find(Auth::id());
+        if($course->status == 'PUBLISHED') {
+            return view('course.single', compact('course'));
+        } elseif ($user->role_id == 2) {
+            return view('course.single', compact('course'));
+        } 
+        else {
+            return abort(404);
+        }
     }
 
     public function join(Request $request) {
@@ -119,7 +133,8 @@ class CourseController extends Controller
      */
     public function edit(Course $course)
     {
-        //
+        $categories = Category::all();
+        return view('course.edit', compact('course', 'categories'));
     }
 
     /**
@@ -131,7 +146,42 @@ class CourseController extends Controller
      */
     public function update(Request $request, Course $course)
     {
-        //
+        $validator = Validator::make($request->all(), [
+            'name' => 'required',
+            'description' => 'required',
+            'category' => 'required',
+            'photo' => 'image|nullable|max:9999|mimes:jpeg,jpg,png',
+        ]);
+        
+        if($validator->fails()) {
+            return redirect()->back()->withErrors($validator);
+        
+        } else {
+
+            if($request->hasFile('photo')) {
+                // Get filename with extension            
+                $filenameWithExt = $request->file('photo')->getClientOriginalName();
+                // Get just filename
+                $filename = pathinfo($filenameWithExt, PATHINFO_FILENAME);            
+               // Get just ext
+                $extension = $request->file('photo')->getClientOriginalExtension();
+                //Filename to store
+                $fileNameToStore = $filename.'_'.time().'.'.$extension;                       
+              // Upload Image
+                $path = $request->file('photo')->storeAs('public/images', $fileNameToStore);
+            } else {
+                $fileNameToStore = $course->cover_url;
+            }
+            $curr = Course::find($course->id)->first();
+            $curr->name = $request->name;
+            $curr->description = $request->description;
+            $curr->cover_url = $fileNameToStore;
+            $curr->category = $request->category;
+            $curr->slug = str_slug($request->name, '-');
+            $curr->save();
+
+            return redirect()->route('courses.show', [$course])->with('success', 'Course Updated Successfully!');
+        }
     }
 
     /**
@@ -143,5 +193,25 @@ class CourseController extends Controller
     public function destroy(Course $course)
     {
         //
+    }
+
+    public function unpublish(Course $course) {
+        $course = Course::find($course->id)->first();
+        $course->status = 'UNPUBLISHED';
+        $course->save();
+
+        return redirect()->back()->with('danger', 'Course has been unpublished!');
+    }
+
+    public function publish(Course $course) {
+        $course = Course::find($course->id)->first();
+        $course->status = 'PUBLISHED';
+        $course->save();
+
+        return redirect()->back()->with('success', 'Course has been published!');
+    }
+
+    public function board(Course $course) {
+        return view('course.single', compact('course'));
     }
 }

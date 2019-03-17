@@ -4,12 +4,14 @@ namespace App\Http\Controllers;
 
 use App\Resource;
 use App\Course;
+use App\Curriculum;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class ResourceController extends Controller
 {
     public function __construct() {
-        $this->middleware('auth');
+        $this->middleware(['auth', 'verified']);
     }
     
     /**
@@ -19,7 +21,8 @@ class ResourceController extends Controller
      */
     public function index()
     {
-        return view('resources.index');
+        $resources = Resource::all();
+        return view('resources.index', compact('resources'));
     }
 
     /**
@@ -39,31 +42,30 @@ class ResourceController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
+    
     public function store(Request $request)
     {
-        $this->validate($request, [
-            'file' => 'required|max:10000|mimes:doc,docx,pdf,jpeg,jpg,png,gif,xls,xlsx,ppt,pptx'
-        ]);
-        // Get filename with extension            
-        $filenameWithExt = $request->file('file')->getClientOriginalName();
-        // Get just filename
-        $filename = pathinfo($filenameWithExt, PATHINFO_FILENAME);            
-        // Get just ext
-        $extension = $request->file('file')->getClientOriginalExtension();
-        //Filename to store
-        $fileNameToStore = $filename.'_'.time().'.'.$extension;                       
-        // Upload Image
-        $path = $request->file('file')->storeAs('public/uploads', $fileNameToStore);
+        $file = $request->file('file');
+        $extension = $file->getClientOriginalExtension();
+        $name = $file->getClientOriginalName();
+        $size = $file->getSize();
+        $fileNameToStore = time().'.'.$extension;
+        $path = $file->storeAs('public/uploads', $fileNameToStore);
+        
+        if($path) {
+            $resource = new Resource;
+            $resource->file_name = $name;
+            $resource->file_url = $fileNameToStore;
+            $resource->file_type = $extension;
+            $resource->file_size = $size;
+            $resource->user_id = Auth::id();
+            $resource->course_id = $request->rid;
+            $resource->save();
 
-        $resource = new Resource;
-        $resource->file_name = $filename;
-        $resource->file_url = $filenameWithExt;
-        $resource->file_type = $extension;
-        $resource->file_size = $file->getSize();
-        $resource->user_id = Auth::id();
-        $resource->course_id = $request->rid;
-        $resource->save();
-	
+            return response()->json(['success' => 200]);
+        } else {
+            return response()->json(['error' => 400]);
+        }
     }
 
     /**
@@ -108,6 +110,9 @@ class ResourceController extends Controller
      */
     public function destroy(Resource $resource)
     {
-        //
+        Resource::find($resource->id)->delete();
+
+        return redirect()->back()->with('success', 'Removed file successfully');
+
     }
 }

@@ -6,7 +6,7 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
-class User extends Authenticatable
+class User extends Authenticatable implements MustVerifyEmail
 {
     use Notifiable;
     
@@ -16,8 +16,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'username', 'password', 'account_type', 'img_filename', 'about', 'website',
-    ];
+        'name', 'email', 'password', 'img_filename', 'about', 'website', 'role_id'];
 
     /**
      * The attributes that should be hidden for arrays.
@@ -36,9 +35,19 @@ class User extends Authenticatable
         return $this->hasMany('App\Resource');
     }
 
-    public function getRouteKeyName()
-    {
-        return 'username';
+    public function note() {
+        return $this->hasMany('App\Note');
     }
 
+    public function announcement() {
+        return $this->hasMany('App\Update');
+    }
+
+    public function role() {
+        return $this->belongsTo('App\Role');
+    }
+
+    public function assignment() {
+        return $this->hasMany('App\Assignment');
+    }
 }

@@ -17,7 +17,9 @@
 
     <!-- Scripts -->
     <script src="{{ asset('js/app.js') }}" defer></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/jodit/3.1.39/jodit.min.js" defer></script>
+    <script src="{{ asset('js/dropzone.js') }}" defer></script>
+    <script src="{{ asset('js/jquery-steps.js') }}" defer></script>
+    <script src="https://cloud.tinymce.com/4/tinymce.min.js?apiKey=pod2q2gagay4qeyo56hxvrc6m417h718t0kozu2566tvh61s"></script>
     <script src="{{ asset('js/functions.js') }}" defer></script>
 
     <!-- Fonts -->
@@ -27,8 +29,9 @@
 
     <!-- Styles -->
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
+    <link href="{{ asset('css/jquery-steps.css') }}" rel="stylesheet">
     <link href="{{ asset('css/style.css') }}" rel="stylesheet">
-    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/jodit/3.1.39/jodit.min.css">
+    <link href="{{ asset('css/dropzone.css') }}" rel="stylesheet">
 </head>
 <body>
     <div id="app">
@@ -49,16 +52,10 @@
                                 <a class="nav-link" href="{{ route('courses.index') }}">{{ __('Home') }}</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="{{ route('courses.index') }}">{{ __('Features') }}</a>
+                                <a class="nav-link" href="/about">About</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="{{ route('courses.index') }}">{{ __('Documentation') }}</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="{{ route('courses.index') }}">{{ __('About') }}</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="{{ route('courses.index') }}">{{ __('Contact') }}</a>
+                                <a class="nav-link" href="/contact">Contact</a>
                             </li>
                         @else
                             <li class="nav-item">
@@ -88,17 +85,17 @@
                         @else
                             <li class="nav-item dropdown">
                                 <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
-                                <img src="{{ asset('images/default-user.png') }}" height="35" alt="Profile Logo" class="rounded-circle"><span class="caret"></span>
+                                    {{ Auth::user()->name }}
                                 </a>
 
                                 <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
                                     <a class="dropdown-item" href="{{ route('dashboard') }}">
                                         {{ __('Dashboard') }}
                                     </a>
-                                    <a class="dropdown-item" href="/{{ Auth::user()->username }}">
+                                    <a class="dropdown-item" href="{{ route('profiles.index', Auth::id()) }}">
                                         {{ __('Profile') }}
                                     </a>
-                                    <a class="dropdown-item" href="/{{ Auth::user()->username }}/edit">
+                                    <a class="dropdown-item" href="{{ route('profiles.edit', Auth::id()) }}">
                                         {{ __('Settings') }}
                                     </a>
                                     <a class="dropdown-item" href="{{ route('logout') }}"
@@ -125,5 +122,46 @@
             
         </footer>
     </div>
+    <script>
+  var editor_config = {
+    path_absolute : "/",
+    selector: 'textarea',
+    height: 300,
+    plugins: [
+      "advlist autolink lists link image charmap print preview hr anchor pagebreak",
+      "searchreplace wordcount visualblocks visualchars code fullscreen",
+      "insertdatetime media nonbreaking save table directionality",
+      "emoticons template paste textpattern"
+    ],
+    toolbar: "insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image media",
+    relative_urls: false,
+    file_browser_callback : function(field_name, url, type, win) {
+      var x = window.innerWidth || document.documentElement.clientWidth || document.getElementsByTagName('body')[0].clientWidth;
+      var y = window.innerHeight|| document.documentElement.clientHeight|| document.getElementsByTagName('body')[0].clientHeight;
+
+      var cmsURL = editor_config.path_absolute + 'laravel-filemanager?field_name=' + field_name;
+      if (type == 'image') {
+        cmsURL = cmsURL + "&type=Images";
+      } else {
+        cmsURL = cmsURL + "&type=Files";
+      }
+
+      tinyMCE.activeEditor.windowManager.open({
+        file : cmsURL,
+        title : 'Filemanager',
+        width : x * 0.8,
+        height : y * 0.8,
+        resizable : "yes",
+        close_previous : "no"
+      });
+    }, 
+    image_class_list: [
+            {title: 'None', value: ''},
+            {title: 'Bootstrap responsive image', value: 'img-fluid'},
+        ] 
+  };
+
+  tinymce.init(editor_config);
+</script>
 </body>
 </html>

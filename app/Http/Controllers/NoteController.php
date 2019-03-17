@@ -3,12 +3,15 @@
 namespace App\Http\Controllers;
 
 use App\Note;
+use App\User;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
+use Validator;
 
 class NoteController extends Controller
 {
     public function __construct() {
-        $this->middleware('auth');
+        $this->middleware(['auth', 'verified']);
     }
     
     /**
@@ -18,7 +21,8 @@ class NoteController extends Controller
      */
     public function index()
     {
-        return view('notes.index');
+        $user = User::find(Auth::id());
+        return view('notes.index', compact('user'));
     }
 
     /**
@@ -28,7 +32,7 @@ class NoteController extends Controller
      */
     public function create()
     {
-        //
+        return view('notes.create');
     }
 
     /**
@@ -39,7 +43,42 @@ class NoteController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validator = Validator::make($request->all(), [
+            'title' => 'required',
+            'content' => 'required',
+            'photo' => 'image|nullable|max:1999|mimes:jpeg,jpg,png',
+        ]);
+        
+        if($validator->fails()) {
+            return redirect()->back()->withErrors($validator);
+        
+        } else {
+
+            if($request->hasFile('photo')) {
+                // Get filename with extension            
+                $filenameWithExt = $request->file('photo')->getClientOriginalName();
+                // Get just filename
+                $filename = pathinfo($filenameWithExt, PATHINFO_FILENAME);            
+               // Get just ext
+                $extension = $request->file('photo')->getClientOriginalExtension();
+                //Filename to store
+                $fileNameToStore = $filename.'_'.time().'.'.$extension;                       
+              // Upload Image
+                $path = $request->file('photo')->storeAs('public/images', $fileNameToStore);
+            } else {
+                $fileNameToStore = 'default-course-banner.png';
+            }
+
+            $note = new Note;
+            $note->title = title_case($request->title);
+            $note->content = $request->content;
+            $note->cover_url = $fileNameToStore;
+            $note->user_id = Auth::id();
+            $note->save();
+
+            return redirect()->route('notes.show', [$note])->with('success', 'Note created successfully!');
+
+        }    
     }
 
     /**
@@ -50,7 +89,7 @@ class NoteController extends Controller
      */
     public function show(Note $note)
     {
-        //
+        return view('notes.show', compact('note'));
     }
 
     /**

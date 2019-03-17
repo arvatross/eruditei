@@ -16,24 +16,10 @@
                 <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a> {{ session('status') }}
             </div>
             @endif
-            <h3>Courses</h3>
-        </div>
-    </div>
-    <div class="row">
-       <div class="col-md-4 mb-3">
-            <form class="form-block">
-                <input class="form-control border-0 shadow-sm" type="search" placeholder="Search my courses" aria-label="Search">
-            </form>
-       </div>
-       <div class="col-md-4 mb-3">
-            <select class="custom-select border-0 shadow-sm">
-                <option selected>Sort by</option>
-                <option value="1">Recently Accessed</option>
-                <option value="2">Recently Joined</option>
-            </select>
-       </div>
-       <div class="col-md-4 mb-3">
-            @if(Auth::user()->account_type === 'Student')
+            <div class="d-flex justify-content-between">
+                <h3>Courses</h3>
+            <div class="col-md-4">
+            @if(Auth::user()->role_id == '3')
             <button class="btn btn-block btn-success shadow-sm" data-toggle="modal" data-target="#courseModal">Join a course</button>
             <div class="modal fade" id="courseModal" tabindex="-1" role="dialog" aria-labelledby="courseModal" aria-hidden="true">
                 <div class="modal-dialog modal-dialog-centered" role="document">
@@ -62,21 +48,38 @@
             @else
             <a href="{{ route('courses.create') }}" class="btn btn-block btn-success">Create a course</a>
             @endif
-       </div>
+            </div>
+            </div>
+            
+        </div>
     </div>
     <div class="row mt-3">
         @foreach($user->course as $course)
+            @if($course->status == 'PUBLISHED')
             <div class="col-md-4">
                 <a href="/course/{{ $course->slug }}" class="text-secondary card-link">
                     <div class="card border-0 shadow mb-4">
                         <img class="card-img-top" src="/storage/images/{{ $course->cover_url }}" alt="{{ $course->name }}">
                         <div class="card-body">
                             <h5 class="card-title">{{ $course->name }}</h5>
-                            <p class="card-text">{{ $course->description }}</p>
+                            <p class="card-text">{!! str_limit($course->description, 50, '...') !!}</p>
                         </div>
                     </div>
                 </a>
             </div>
+            @elseif($course->status == 'UNPUBLISHED' && $user->role_id == 2)
+            <div class="col-md-4">
+                <a href="/course/{{ $course->slug }}" class="text-secondary card-link">
+                    <div class="card border-0 shadow mb-4">
+                        <img class="card-img-top" src="/storage/images/{{ $course->cover_url }}" alt="{{ $course->name }}">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ $course->name }}</h5>
+                            <p class="card-text">{!! str_limit($course->description, 50, '...') !!}</p>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            @endif
         @endforeach
     </div>
 </div>

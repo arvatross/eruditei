@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Curriculum;
 use App\Course;
 use Illuminate\Http\Request;
+use Validator;
 
 class CurriculumController extends Controller
 {
@@ -19,7 +20,8 @@ class CurriculumController extends Controller
      */
     public function index()
     {
-        //
+        $curriculum = Curriculum::all();
+        return view('course.single', compact('curriculum'));
     }
 
     /**
@@ -41,18 +43,25 @@ class CurriculumController extends Controller
      */
     public function store(Request $request)
     {
-        $this->validate($request, [
-            'name'=>'required',
-            'description'=>'required',
-        ]);
-        
-        $curriculum = new Curriculum();
-        $curriculum->title = $request->name;
-        $curriculum->content = $request->description;
-        $curriculum->course_id = $request->cid;
-        $curriculum->save();
+        $rules = [
+            'name' => 'required',
+            'description' => 'required'
+        ];
 
-        return redirect()->back()->with('success', 'Successfully added a course curriculum!');
+        $validator = Validator::make($request->all(), $rules);
+
+        if($validator->fails()) {
+            return redirect()->back()->withErrors($validator);
+
+        } else {
+            $curriculum = new Curriculum();
+            $curriculum->title = $request->name;
+            $curriculum->content = $request->description;
+            $curriculum->course_id = $request->cid;
+            $curriculum->save();
+
+            return redirect()->back()->with('success', 'Added a lesson to course successfully!');
+        }
 
     }
 
@@ -64,7 +73,7 @@ class CurriculumController extends Controller
      */
     public function show(Curriculum $curriculum)
     {
-        //
+        return view('curricula.show', compact('curriculum'));
     }
 
     /**
@@ -87,7 +96,12 @@ class CurriculumController extends Controller
      */
     public function update(Request $request, Curriculum $curriculum)
     {
-        //
+        $curr = Curriculum::find($curriculum->id);
+        $curr->title = $request->name;
+        $curr->content = $request->description;
+        $curr->save();
+
+        return redirect()->route('courses.show', [$request->slug])->with('updated', 'Lesson updated!');
     }
 
     /**
@@ -98,6 +112,7 @@ class CurriculumController extends Controller
      */
     public function destroy(Curriculum $curriculum)
     {
-        //
+        Curriculum::find($curriculum->id)->delete();
+        return redirect()->back()->with('danger', 'Lesson deleted!');
     }
 }

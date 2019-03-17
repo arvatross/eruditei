@@ -14,7 +14,15 @@ class Course extends Model
     }
 
     public function curriculum() {
-        return $this->hasMany('App\Curriculum');
+        return $this->hasMany('App\Curriculum')->orderBy('created_at', 'asc');
+    }
+
+    public function resource() {
+        return $this->hasMany('App\Resource')->orderBy('created_at', 'desc');
+    }
+
+    public function announcement() {
+        return $this->hasMany('App\Update');
     }
     
     public function getRouteKeyName() {
